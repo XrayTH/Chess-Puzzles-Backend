@@ -119,6 +119,21 @@ app.post('/api/noticias', (request, response) => {
   });
 });
 
+app.get('/api/usuarios/por-usuario/:user', async (request, response, next) => {
+  try {
+    const username = request.params.user; // Utilizamos request.params.user en lugar de .username
+    const usuario = await Usuario.findOne({ user: username });
+
+    if (usuario) {
+      response.json(usuario);
+    } else {
+      response.status(404).end();
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/api/usuarios/:id', (request, response, next) => {
   Usuario.findById(request.params.id)
     .then(usuario => {

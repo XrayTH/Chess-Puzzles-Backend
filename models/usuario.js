@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   firstlvl1: Number,
   firstlvl2: Number,
   firstlvl3: Number,
-  firstlvl4: Number, // Change from repeated firstlvl5 to firstlvl4
+  firstlvl4: Number, 
   firstlvl5: Number,
   bestlvl1: Number,
   bestlvl2: Number,
