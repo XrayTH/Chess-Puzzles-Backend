@@ -159,33 +159,26 @@ app.delete('/api/noticias/:id', (request, response, next) => {
     .catch(error => next(error));
 });
 
-app.put('/api/usuarios/:id', (request, response, next) => {
-  const body = request.body;
+app.put('/api/usuarios/:id', async (request, response, next) => {
+  try {
+    const userId = request.params.id;
+    const updateFields = { ...request.body };
 
-  const usuario = new Usuario({
-    user: body.user,
-    password: body.password,
-    firstlvl1: body.firstlvl1,
-    firstlvl2: body.firstlvl2,
-    firstlvl3: body.firstlvl3,
-    firstlvl4: body.firstlvl4,
-    firstlvl5: body.firstlvl5,
-    bestlvl1: body.bestlvl1,
-    bestlvl2: body.bestlvl2,
-    bestlvl3: body.bestlvl3,
-    bestlvl4: body.bestlvl4,
-    bestlvl5: body.bestlvl5,
-    total: body.total,
-    puesto: body.puesto,
-    antPuesto: body.antPuesto,
-  });
+    // Elimina explícitamente el campo '_id' de los campos a actualizar
+    delete updateFields._id;
 
-  Usuario.findByIdAndUpdate(request.params.id, usuario, { new: true })
-    .then(updatedUsuario => {
-      response.json(updatedUsuario);
-    })
-    .catch(error => next(error));
+    const updatedUsuario = await Usuario.findByIdAndUpdate(userId, updateFields, { new: true });
+
+    if (!updatedUsuario) {
+      return response.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    return response.json(updatedUsuario);
+  } catch (error) {
+    return next(error);
+  }
 });
+
 
 app.put('/api/noticias/:id', (request, response, next) => {
   const body = request.body;

@@ -2,7 +2,7 @@ POST http://localhost:3001/api/usuarios HTTP/1.1
 Content-Type: application/json
 
 {
-  "user": "Xray",
+  "user": "noname",
   "password": "password",
   "firstlvl1": 100,
   "firstlvl2": 100,
@@ -14,7 +14,7 @@ Content-Type: application/json
   "bestlvl3": 100,
   "bestlvl4": 100,
   "bestlvl5": 100,
-  "total": 500,
-  "puesto": 1,
-  "antPuesto": 2
+  "total": 0,
+  "puesto": 99111,
+  "antPuesto": 9111
 }
