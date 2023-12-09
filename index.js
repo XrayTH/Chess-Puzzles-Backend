@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const Usuario = require('./models/usuario');
+const Noticia = require('./models/noticia');
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method);
@@ -38,10 +39,15 @@ app.get('/api/usuarios', (request, response) => {
   });
 });
 
+app.get('/api/noticias', (request, response) => {
+  Noticia.find({}).then(noticias => {
+    response.json(noticias);
+  });
+});
+
 app.post('/api/usuarios', (request, response) => {
   const body = request.body;
 
-  // Verifica si alguno de los campos requeridos está ausente en la solicitud
   const requiredFields = [
     'user',
     'password',
@@ -89,6 +95,30 @@ app.post('/api/usuarios', (request, response) => {
   });
 });
 
+app.post('/api/noticias', (request, response) => {
+  const body = request.body;
+
+  const requiredFields = [
+    'titulo',
+    'contenido',
+  ];
+  
+  const missingFields = requiredFields.filter(field => !(field in body));
+
+  if (missingFields.length > 0) {
+    return response.status(400).json({ error: `Missing fields: ${missingFields.join(', ')}` });
+  }
+
+  const noticia = new Noticia({
+    titulo: body.titulo,
+    contenido: body.contenido
+  });
+
+  noticia.save().then(savedNoticia => {
+    response.json(savedNoticia);
+  });
+});
+
 app.get('/api/usuarios/:id', (request, response, next) => {
   Usuario.findById(request.params.id)
     .then(usuario => {
@@ -101,8 +131,28 @@ app.get('/api/usuarios/:id', (request, response, next) => {
     .catch(error => next(error));
 });
 
+app.get('/api/noticias/:id', (request, response, next) => {
+  Usuario.findById(request.params.id)
+    .then(noticia => {
+      if (noticia) {
+        response.json(noticia);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch(error => next(error));
+});
+
 app.delete('/api/usuarios/:id', (request, response, next) => {
   Usuario.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end();
+    })
+    .catch(error => next(error));
+});
+
+app.delete('/api/noticias/:id', (request, response, next) => {
+  Noticia.findByIdAndRemove(request.params.id)
     .then(result => {
       response.status(204).end();
     })
@@ -131,6 +181,21 @@ app.put('/api/usuarios/:id', (request, response, next) => {
   });
 
   Usuario.findByIdAndUpdate(request.params.id, usuario, { new: true })
+    .then(updatedUsuario => {
+      response.json(updatedUsuario);
+    })
+    .catch(error => next(error));
+});
+
+app.put('/api/noticias/:id', (request, response, next) => {
+  const body = request.body;
+
+  const noticia = new Noticia({
+    titulo: body.titulo,
+    contenido: body.contenido
+  });
+
+  Noticia.findByIdAndUpdate(request.params.id, noticia, { new: true })
     .then(updatedUsuario => {
       response.json(updatedUsuario);
     })

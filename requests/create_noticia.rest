@@ -1,0 +1,7 @@
+POST http://localhost:3001/api/noticias HTTP/1.1
+Content-Type: application/json
+
+{
+  "titulo": "BACKEND!",
+  "contenido": "Implementamos Backend perras!"
+}
