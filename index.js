@@ -178,9 +178,47 @@ app.put('/api/usuarios/:id', async (request, response, next) => {
   try {
     const userId = request.params.id;
     const updateFields = { ...request.body };
-
-    // Elimina explícitamente el campo '_id' de los campos a actualizar
     delete updateFields._id;
+
+    const usuario = await Usuario.findById(userId);
+
+    let total = 0;
+
+    if (!usuario) {
+      return response.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    if (updateFields.hasOwnProperty('firstlvl1')) {
+      total += updateFields.firstlvl1;
+    } else {
+      total += usuario.firstlvl1 || 0; 
+    }
+
+    if (updateFields.hasOwnProperty('firstlvl2')) {
+      total += updateFields.firstlvl2;
+    } else {
+      total += usuario.firstlvl2 || 0;
+    }
+
+    if (updateFields.hasOwnProperty('firstlvl3')) {
+      total += updateFields.firstlvl3;
+    } else {
+      total += usuario.firstlvl3 || 0;
+    }
+
+    if (updateFields.hasOwnProperty('firstlvl4')) {
+      total += updateFields.firstlvl4;
+    } else {
+      total += usuario.firstlvl4 || 0;
+    }
+
+    if (updateFields.hasOwnProperty('firstlvl5')) {
+      total += updateFields.firstlvl5;
+    } else {
+      total += usuario.firstlvl5 || 0;
+    }
+
+    updateFields.total = total;
 
     const updatedUsuario = await Usuario.findByIdAndUpdate(userId, updateFields, { new: true });
 
